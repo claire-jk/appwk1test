@@ -1,15 +1,14 @@
-import React from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-// 1. 引入字體載入工具
-import { useFonts } from 'expo-font';
-// 2. 引入四種字體的樣式
 import { Caveat_400Regular } from '@expo-google-fonts/caveat';
 import { CormorantGaramond_400Regular } from '@expo-google-fonts/cormorant-garamond';
 import { GreatVibes_400Regular } from '@expo-google-fonts/great-vibes';
 import { ZenKurenaido_400Regular } from '@expo-google-fonts/zen-kurenaido';
+import { useFonts } from 'expo-font';
+import React from 'react';
+import { Alert, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+const { width: windowWidth } = Dimensions.get('window');
 
 export default function HomeScreen() {
-  // 3. 載入所有字體
   let [fontsLoaded] = useFonts({
     'Zen': ZenKurenaido_400Regular,
     'Vibes': GreatVibes_400Regular,
@@ -17,28 +16,65 @@ export default function HomeScreen() {
     'Garamond': CormorantGaramond_400Regular,
   });
 
-  // 4. 判斷字體是否載入完成，未完成前顯示載入文字
   if (!fontsLoaded) {
     return (
-      <View style={styles.mainWrapper}>
-        <Text>Loading Fonts...</Text>
+      <View style={styles.loadingWrapper}>
+        <Text style={{ color: 'white' }}>Loading Fonts...</Text>
       </View>
     );
   }
 
+  // 自介欄設定
+  const profileConfig = {
+    backgroundColor: '#bf8aff79', 
+    fontFamily: 'Zen',           
+    textColor: '#ffffff',        
+    name: '陳筠蒨',
+    id: '111319040'
+  };
+
   return (
     <View style={styles.mainWrapper}>
-      {/* 使用 ScrollView 包裹主要內容，避免畫面太長塞不下 */}
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={[styles.baseText, { fontFamily: 'Zen' }]}>
-          Name:北川泠
-        </Text>
-        <Text style={[styles.baseText, { fontFamily: 'Caveat', fontSize: 35 }]}>
-          Student Number:111319040
-        </Text>
+      
+      {/* 1. 上半部自介欄 */}
+      <View style={[styles.topContainer, { backgroundColor: profileConfig.backgroundColor }]}>
+        <View style={styles.profileContent}>
+          <View style={styles.circleMarker} />
+          {/* 修正後的 textGroup：確保所有文字都在 <Text> 內 */}
+          <View style={styles.textGroup}>
+            <Text style={[styles.profileTitle, { fontFamily: 'Zen', color: profileConfig.textColor }]}>
+              自介
+            </Text>
+            <Text style={[styles.subText, { color: profileConfig.textColor }]}>Name: {profileConfig.name}</Text>
+            <Text style={[styles.subText, { color: profileConfig.textColor }]}>ID: {profileConfig.id}</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* 2. 下半部四宮格內容區 */}
+      <ScrollView contentContainerStyle={styles.bottomScrollContent}>
+        <View style={styles.gridContainer}>
+          
+          <View style={styles.gridBox}>
+            <Text style={[styles.gridText, { fontFamily: 'Zen' }]}>動漫</Text>
+          </View>
+
+          <View style={styles.gridBox}>
+            <Text style={[styles.gridText, { fontFamily: 'Caveat' }]}>BTS</Text>
+          </View>
+
+          <View style={styles.gridBox}>
+            <Text style={[styles.gridText, { fontFamily: 'Zen' }]}>寫文</Text>
+          </View>
+
+          <View style={styles.gridBox}>
+            <Text style={[styles.gridText, { fontFamily: 'Zen' }]}>聊聊</Text>
+          </View>
+
+        </View>
       </ScrollView>
 
-      {/* FAB 懸浮按鈕：放在 ScrollView 外層，這樣它就不會跟著捲動 */}
+      {/* FAB 懸浮按鈕 */}
       <TouchableOpacity 
         style={styles.fab} 
         onPress={() => Alert.alert("點擊", "您按下了 FAB！")}
@@ -51,41 +87,88 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   mainWrapper: {
-    flex: 1, // 讓外層容器佔滿整個螢幕
+    flex: 1,
+    backgroundColor: '#000', 
   },
-  contentContainer: {
-    flexGrow: 1,
+  loadingWrapper: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#000',
+  },
+  topContainer: {
+    marginTop: 100,         
+    marginHorizontal: 20,
     padding: 20,
-    backgroundColor: '#000000ff',
+    borderWidth: 2,
+    borderColor: '#fff',   
+    borderRadius: 5,
   },
-  baseText: {
-    fontSize: 24,
-    marginVertical: 15,
-    textAlign: 'center',
-    color: '#fff25eff',
+  profileContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  // FAB 的關鍵樣式
+  circleMarker: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: '#fff',
+    marginRight: 20,
+  },
+  textGroup: {
+    flex: 1, // 讓文字區域自動填滿剩餘空間
+  },
+  profileTitle: {
+    fontSize: 28,
+    //fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  subText: {
+    fontSize: 14,
+    marginTop: 2,
+    fontFamily: 'Caveat',
+  },
+  bottomScrollContent: {
+    paddingVertical: 30,
+  },
+  gridContainer: {
+    flexDirection: 'row',     
+    flexWrap: 'wrap',         
+    justifyContent: 'space-evenly', 
+  },
+  gridBox: {
+    width: windowWidth * 0.4, 
+    height: windowWidth * 0.4, 
+    borderWidth: 2,
+    borderColor: '#fff',      
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 25,
+    marginTop: 25,        
+  },
+  gridText: {
+    fontSize: 28,
+    color: '#fff',
+  },
   fab: {
-    position: 'absolute',     // 絕對定位
-    width: 60,                // 寬度
-    height: 60,               // 高度
+    position: 'absolute',
+    width: 60,
+    height: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    right: 15,                // 距離右邊 30
-    bottom: 30,               // 距離底部 30
-    backgroundColor: '#8A2BE2', // 按鈕顏色
-    borderRadius: 30,         // 變成圓形
-    elevation: 8,             // Android 陰影
-    shadowColor: '#000',      // iOS 陰影
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    right: 20,
+    bottom: 30,
+    backgroundColor: '#8A2BE2',
+    shadowColor: '#ffffffff',
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    shadowOffset: { height: 10, width: 10 },
+    borderRadius: 30,
+    elevation: 8,
   },
   fabIcon: {
     fontSize: 30,
     color: 'white',
-    lineHeight: 30,
   },
 });
